@@ -19,6 +19,13 @@ const Login = () => {
   const [loading, setLoading] = useState(false);
 
   const handleLogin = async () => {
+    if (!email || !password) {
+      Alert.alert(
+        "Missing Information",
+        "Please enter both email and password."
+      );
+      return;
+    }
     try {
       setLoading(true);
       const response = await axios.post("http://128.199.25.88:86/loan/login", {
@@ -26,7 +33,7 @@ const Login = () => {
         password,
       });
       console.log("Login successful:", response.data);
-    //   navigation.navigate('Details');
+      //   navigation.navigate('Details');
     } catch (error) {
       console.error("Login error:", error);
       Alert.alert(
