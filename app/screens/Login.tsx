@@ -90,24 +90,29 @@ export default Login;
 
 const styles = StyleSheet.create({
   container: {
-    marginHorizontal: 50,
-    marginTop: 200,
     flex: 1,
+    padding: 20,
+    alignItems: "center",
     justifyContent: "center",
+    marginTop: 20,
+    backgroundColor: "#f3f3f3",
   },
   input: {
-    marginVertical: 3,
     height: 40,
-    borderRadius: 100,
-    shadowColor: "grey",
-    shadowOpacity: 50,
-    padding: 10,
-    backgroundColor: "#e6e6ee",
+    borderWidth: 1,
+    borderColor: "#ffffff",
+    borderRadius: 15,
+    paddingLeft: 10,
+    marginBottom: 10,
+    width: 300,
+    flexDirection: "row",
+    backgroundColor: "#ffffff",
+
+    alignItems: "center",
+    color: "#ccc",
   },
   text: {
-    marginTop: 5,
     fontSize: 16,
-    marginVertical: 8,
     color: "#00004B",
   },
   button: {
@@ -117,6 +122,7 @@ const styles = StyleSheet.create({
     marginTop: 10,
     height: 55,
     alignItems: "center",
+    width: 200,
   },
   buttonText: {
     color: "#fff",
@@ -139,5 +145,6 @@ const styles = StyleSheet.create({
     paddingBottom: 2,
     color: "#00004B",
     marginBottom: 20,
+    marginRight: 120,
   },
 });
