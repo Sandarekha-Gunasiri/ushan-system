@@ -1,6 +1,13 @@
 import React, { useEffect, useState } from "react";
-import { View, Text, StyleSheet, Button, TouchableOpacity } from "react-native";
-import { ScrollView, TextInput } from "react-native-gesture-handler";
+import {
+  View,
+  Text,
+  StyleSheet,
+  Button,
+  TouchableOpacity,
+  ActivityIndicator,
+} from "react-native";
+import { FlatList, ScrollView, TextInput } from "react-native-gesture-handler";
 import { useNavigation } from "@react-navigation/native";
 import { AntDesign } from "@expo/vector-icons";
 import { Ionicons } from "@expo/vector-icons";
@@ -13,6 +20,7 @@ interface LoanData {
 
 const Home = () => {
   const [data, setData] = useState<LoanData[]>([]);
+  const navigation = useNavigation();
 
   useEffect(() => {
     fetch("http://128.199.25.88:86/index.php/api/loan/settlement/gayan")
@@ -20,42 +28,40 @@ const Home = () => {
       .then((data: LoanData[]) => setData(data))
       .catch((error) => console.error("Error fetching data: ", error));
   }, []);
-  const navigation = useNavigation();
 
   const handleButtonClick = (customerId: string) => {
     console.log("Button clicked for customer ID:", customerId);
     navigation.navigate("PaymentDetails", { customerId });
   };
-
+  const renderItem = ({ item }: { item: LoanData }) => (
+    <View style={styles.item}>
+      <View style={styles.idContainer}>
+        <Text style={styles.id}>{item.id}</Text>
+      </View>
+      <View style={styles.inf}>
+        <Text style={styles.text}>Customer: {item.customer}</Text>
+        <Text style={styles.text}>Amount: {item.amount}</Text>
+      </View>
+      <TouchableOpacity onPress={() => handleButtonClick(item.id)}>
+        <AntDesign name="rightcircle" style={styles.btn} size={30} />
+      </TouchableOpacity>
+    </View>
+  );
   return (
     <View style={styles.container}>
       <TouchableOpacity>
         <View style={styles.input}>
           <Ionicons name="search" size={24} style={styles.srch} />
-          <View>
-            <Text style={styles.srch}>Search Customer?</Text>
-          </View>
+          <Text style={styles.srch}>Search Customer?</Text>
         </View>
       </TouchableOpacity>
       <Text style={styles.header}>Today Collections</Text>
-      <ScrollView>
-        <View>
-          {data.map((item) => (
-            <View key={item.id} style={styles.item}>
-              <View style={styles.idContainer}>
-                <Text style={styles.id}>{item.id}</Text>
-              </View>
-              <View style={styles.inf}>
-                <Text style={styles.text}>Customer: {item.customer}</Text>
-                <Text style={styles.text}>Amount: {item.amount}</Text>
-              </View>
-              <TouchableOpacity onPress={() => handleButtonClick(item.id)}>
-                <AntDesign name="rightcircle" style={styles.btn} size={30} />
-              </TouchableOpacity>
-            </View>
-          ))}
-        </View>
-      </ScrollView>
+
+      <FlatList
+        data={data}
+        renderItem={renderItem}
+        keyExtractor={(item) => item.id}
+      />
     </View>
   );
 };
