@@ -21,12 +21,18 @@ interface LoanData {
 const Home = () => {
   const [data, setData] = useState<LoanData[]>([]);
   const navigation = useNavigation();
-
+  const [loading, setLoading] = useState(true);
   useEffect(() => {
     fetch("http://128.199.25.88:86/index.php/api/loan/settlement/gayan")
       .then((response) => response.json())
-      .then((data: LoanData[]) => setData(data))
-      .catch((error) => console.error("Error fetching data: ", error));
+      .then((data: LoanData[]) => {
+        setData(data);
+        setLoading(false);
+      })
+      .catch((error) => {
+        console.error("Error ", error);
+        setLoading(false);
+      });
   }, []);
 
   const handleButtonClick = (customerId: string) => {
@@ -39,7 +45,7 @@ const Home = () => {
         <Text style={styles.id}>{item.id}</Text>
       </View>
       <View style={styles.inf}>
-        <Text style={styles.text}>Customer: {item.customer}</Text>
+        <Text style={styles.htext}>Customer: {item.customer}</Text>
         <Text style={styles.text}>Amount: {item.amount}</Text>
       </View>
       <TouchableOpacity onPress={() => handleButtonClick(item.id)}>
@@ -47,6 +53,14 @@ const Home = () => {
       </TouchableOpacity>
     </View>
   );
+  if (loading) {
+    return (
+      <View style={styles.loader}>
+        <ActivityIndicator size="large" color="#00004B" />
+      </View>
+    );
+  }
+
   return (
     <View style={styles.container}>
       <TouchableOpacity>
@@ -67,6 +81,11 @@ const Home = () => {
 };
 
 const styles = StyleSheet.create({
+  loader: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+  },
   container: {
     flex: 1,
     padding: 20,
@@ -136,6 +155,11 @@ const styles = StyleSheet.create({
   text: {
     fontSize: 16,
     color: "#00004B",
+  },
+  htext: {
+    fontSize: 16,
+    color: "#00004B",
+    fontWeight: "bold",
   },
   inf: {
     width: 200,

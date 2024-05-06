@@ -5,15 +5,18 @@ import { TextInput } from "react-native-gesture-handler";
 const PaymentDetails = ({ route }) => {
   const { customerId } = route.params;
 
+
   return (
     <View style={styles.container}>
-      <Text style={styles.header}>Payment Details for {customerId}</Text>
-      <View style={styles.dtls}>
+      <Text style={styles.header}>
+        Payment Details for {customerId} 
+      </Text>
+      <View>
         <Text style={styles.text}>Balance: </Text>
         <Text style={styles.text}>Payment: </Text>
         <Text style={styles.text}>Loan Start Date: </Text>
         <Text style={styles.text}>Loan End Date: </Text>
-        <Text style={styles.text}>Value:</Text>
+        <Text style={styles.text}>Amount:</Text>
         <TextInput style={styles.input} placeholder="Enter Amount" />
       </View>
       <TouchableOpacity style={styles.button}>
