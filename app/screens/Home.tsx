@@ -7,10 +7,11 @@ import {
   TouchableOpacity,
   ActivityIndicator,
 } from "react-native";
-import { FlatList, ScrollView, TextInput } from "react-native-gesture-handler";
+import { FlatList, TextInput } from "react-native-gesture-handler";
 import { useNavigation } from "@react-navigation/native";
 import { AntDesign } from "@expo/vector-icons";
 import { Ionicons } from "@expo/vector-icons";
+
 interface LoanData {
   id: string;
   customer: string;
@@ -22,30 +23,50 @@ const Home = () => {
   const [data, setData] = useState<LoanData[]>([]);
   const navigation = useNavigation();
   const [loading, setLoading] = useState(true);
+  const [filteredData, setFilteredData] = useState<LoanData[]>([]);
+  const [searchQuery, setSearchQuery] = useState("");
+
   useEffect(() => {
+    fetchData();
+  }, []);
+
+  const fetchData = () => {
+    setLoading(true);
     fetch("http://128.199.25.88:86/index.php/api/loan/settlement/gayan")
       .then((response) => response.json())
       .then((data: LoanData[]) => {
         setData(data);
+        setFilteredData(data);
         setLoading(false);
       })
       .catch((error) => {
         console.error("Error ", error);
         setLoading(false);
       });
-  }, []);
+  };
 
   const handleButtonClick = (customerId: string) => {
     console.log("Button clicked for customer ID:", customerId);
     navigation.navigate("PaymentDetails", { customerId });
   };
+
+  const handleSearch = (query: string) => {
+    setSearchQuery(query);
+    const filtered = data.filter(
+      (item) =>
+        item.customer.toLowerCase().includes(query.toLowerCase()) ||
+        item.id.toLowerCase().includes(query.toLowerCase())
+    );
+    setFilteredData(filtered);
+  };
+
   const renderItem = ({ item }: { item: LoanData }) => (
     <View style={styles.item}>
       <View style={styles.idContainer}>
         <Text style={styles.id}>{item.id}</Text>
       </View>
       <View style={styles.inf}>
-        <Text style={styles.htext}>Customer: {item.customer}</Text>
+        <Text style={styles.htext}>{item.customer}</Text>
         <Text style={styles.text}>Amount: {item.amount}</Text>
       </View>
       <TouchableOpacity onPress={() => handleButtonClick(item.id)}>
@@ -53,6 +74,7 @@ const Home = () => {
       </TouchableOpacity>
     </View>
   );
+
   if (loading) {
     return (
       <View style={styles.loader}>
@@ -63,24 +85,34 @@ const Home = () => {
 
   return (
     <View style={styles.container}>
-      <TouchableOpacity>
-        <View style={styles.input}>
-          <Ionicons name="search" size={24} style={styles.srch} />
-          <Text style={styles.srch}>Search Customer?</Text>
-        </View>
-      </TouchableOpacity>
+      <View style={styles.input}>
+        <Ionicons name="search" size={24} style={styles.searchIcon} />
+        <TextInput
+          style={styles.searchInput}
+          placeholder="Search Customer"
+          onChangeText={handleSearch}
+          value={searchQuery}
+        />
+      </View>
       <Text style={styles.header}>Today Collections</Text>
 
       <FlatList
-        data={data}
+        data={filteredData}
         renderItem={renderItem}
         keyExtractor={(item) => item.id}
       />
     </View>
   );
 };
-
 const styles = StyleSheet.create({
+  searchIcon: {
+    color: "#adadad",
+  },
+  searchInput: {
+    flex: 1,
+    marginLeft: 10,
+    color: "#adadad",
+  },
   loader: {
     flex: 1,
     justifyContent: "center",
@@ -142,7 +174,7 @@ const styles = StyleSheet.create({
   idContainer: {
     width: 40,
     height: 40,
-    borderRadius: 15,
+    borderRadius: 25,
     backgroundColor: "#101047",
     justifyContent: "center",
     alignItems: "center",
